@@ -6,10 +6,6 @@ const { DataTypes } = Sequelize;
 
 const Routes = db.define("routes", {
     
-    distance: {
-        type: DataTypes.FLOAT,
-        allowNull: false
-    },
     transit: {
         type: DataTypes.INTEGER,
         allowNull: false

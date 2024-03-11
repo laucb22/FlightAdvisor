@@ -29,7 +29,7 @@ export const GetRoutes = async(req, res) => {
 export const CreateGraph = async(req, res) => {
     try{
         const {src, dest} = req.body;
-        
+        console.log(req.body)
         const citySrc = await Cities.findOne({
             where: {
                 name: src
@@ -44,22 +44,20 @@ export const CreateGraph = async(req, res) => {
         if(!citySrc || !cityDest) res.status(404).json("Failed to find one or either of the cities");
 
         let cities = await db.query(
-            'SELECT c.name as src, c2.name as dest, r.transit, r.distance, r.weather, r.animals  FROM cities c JOIN routes r on c.id = r.cityId JOIN cities c2 on r.city2Id = c2.id;'
+            'SELECT c.name as src, c2.name as dest, r.transit, r.weather, r.animals  FROM cities c JOIN routes r on c.id = r.cityId JOIN cities c2 on r.city2Id = c2.id;',
+            {type: Sequelize.QueryTypes.SELECT}
         )
         
-        //res.json(cities[0][0].src);
 
         let graph = new Graph();
-        for(let i = 0; i < cities[0].length; i++){
-            console.log(graph.addNode(cities[0][i].src));
-            console.log(graph.addNode(cities[0][i].dest));
-            let weight = parseFloat(cities[0][i].distance);
-            console.log(graph.addEdge(cities[0][i].src, cities[0][i].dest, weight));
+        for(let i = 0; i < cities.length; i++){
+            graph.addNode(cities[i].src);
+            graph.addNode(cities[i].dest);
+            let weight = cities[i].transit + cities[i].weather + cities[i].animals;
+            graph.addEdge(cities[i].src, cities[i].dest, weight);
         }
         
-        graph.show()
-        
-        res.json({"Graph": graph.findShortestPath(src, dest)});        
+        res.json({"next": graph.findShortestPath(src, dest)});        
 
 
 

@@ -51,14 +51,6 @@ export class Graph {
     }
 
 
-    allNodesVisited(visitedNodes) {
-
-        for(let i = 0; i < visitedNodes.length; i++){
-            if(!visitedNodes[i]) return false;
-        }
-        return true;
-    }
-
     findShortestPath(startNode, endNode){
         let visitedNodes = [];
         let distances = [];
@@ -93,41 +85,24 @@ export class Graph {
             }
         }
 
-        return this.getPath(previousNodes, distances, startIndex, endIndex);
-
-
-
+        return this.getNextStep(previousNodes, startIndex, endIndex);
     }
 
-    getPath(previousNodes, distances, startIndex, endIndex){
+    
+
+    getNextStep(previousNodes, startIndex, endIndex){
         let path = []
-        let pathStr = " "
-        let nodeIndex = endIndex;
-        console.log(distances)
-        console.log(startIndex + " " + endIndex)
+        let nodeIndex = endIndex
+
         while(nodeIndex !== startIndex){
             path.push(nodeIndex);
             nodeIndex = previousNodes[nodeIndex];
         }
 
-        path.push(startIndex)
-        path = path.reverse()
-
         for(let i = 0; i < path.length; i++){
             path[i] = this.nodes[path[i]].content;
         }
-
-        pathStr += "In order to travel from " + this.nodes[startIndex].content + " to " + this.nodes[endIndex].content + 
-        + " with the shortest path of weight = " +  distances[endIndex] + ":";
-
-        console.log(distances[endIndex])
-        pathStr += "START: " + path[0];
-        for(let i = 1; i < path.length; i++){
-        
-            pathStr += " --> " + path[i];
-        }
-        
-        return pathStr;
+        return "Next city is: " + path[path.length - 1]
 
     }
 
